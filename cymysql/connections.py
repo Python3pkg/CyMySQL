@@ -12,7 +12,7 @@ import os
 import stat
 
 try:
-    from ConfigParser import RawConfigParser
+    from configparser import RawConfigParser
 except ImportError:
     from configparser import RawConfigParser
 
@@ -59,25 +59,25 @@ def dump_packet(data):
         if byte2int(data) >= 65 and byte2int(data) <= 122: #data.isalnum():
             return data
         return '.'
-    print("packet length %d" % len(data))
-    print("method call[1]: %s" % sys._getframe(1).f_code.co_name)
-    print("method call[2]: %s" % sys._getframe(2).f_code.co_name)
-    print("method call[3]: %s" % sys._getframe(3).f_code.co_name)
-    print("method call[4]: %s" % sys._getframe(4).f_code.co_name)
-    print("method call[5]: %s" % sys._getframe(5).f_code.co_name)
-    print("-" * 88)
+    print(("packet length %d" % len(data)))
+    print(("method call[1]: %s" % sys._getframe(1).f_code.co_name))
+    print(("method call[2]: %s" % sys._getframe(2).f_code.co_name))
+    print(("method call[3]: %s" % sys._getframe(3).f_code.co_name))
+    print(("method call[4]: %s" % sys._getframe(4).f_code.co_name))
+    print(("method call[5]: %s" % sys._getframe(5).f_code.co_name))
+    print(("-" * 88))
     dump_data = [data[i:i+16] for i in range(len(data)) if i%16 == 0]
     for d in dump_data:
-        print(' '.join(map(lambda x:"%02X" % byte2int(x), d)) + \
+        print((' '.join(["%02X" % byte2int(x) for x in d]) + \
                 '   ' * (16 - len(d)) + ' ' * 2 + \
-                ' '.join(map(lambda x:"%s" % is_ascii(x), d)))
-    print("-" * 88)
+                ' '.join(["%s" % is_ascii(x) for x in d])))
+    print(("-" * 88))
     print("")
 
 def _scramble(password, message):
     if password == None or len(password) == 0:
         return int2byte(0)
-    if DEBUG: print('password=' + password)
+    if DEBUG: print(('password=' + password))
     stage1 = sha_new(password).digest()
     stage2 = sha_new(stage1).digest()
     s = sha_new()
@@ -337,7 +337,7 @@ class Connection(object):
     # The following methods are INTERNAL USE ONLY (called from Cursor)
     def query(self, sql):
         if DEBUG:
-            print("sending query: %s" % sql)
+            print(("sending query: %s" % sql))
         self._execute_command(COM_QUERY, sql)
         self._result = MySQLResult(self)
 
@@ -430,7 +430,7 @@ class Connection(object):
             self.errorhandler(None, InterfaceError, (-1, 'socket not found'))
 
         if ((PYTHON3 and isinstance(sql, str)) or 
-            (not PYTHON3 and  isinstance(sql, unicode))):
+            (not PYTHON3 and  isinstance(sql, str))):
             sql = sql.encode(self.charset)
 
         prelude = struct.pack('<i', len(sql)+1) + int2byte(command)

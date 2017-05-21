@@ -109,14 +109,14 @@ class Cursor(object):
 
         if PYTHON3 and (not isinstance(query, str)):
             query = query.decode(charset)
-        if (not PYTHON3) and isinstance(query, unicode):
+        if (not PYTHON3) and isinstance(query, str):
             query = query.encode(charset)
 
         if args is not None:
             if isinstance(args, (tuple, list)):
                 escaped_args = tuple(conn.escape(arg) for arg in args)
             elif isinstance(args, dict):
-                escaped_args = dict((key, conn.escape(val)) for (key, val) in args.items())
+                escaped_args = dict((key, conn.escape(val)) for (key, val) in list(args.items()))
             else:
                 #If it's not a dictionary let's try escaping it anyways.
                 #Worst case it will throw a Value error
@@ -178,7 +178,7 @@ class Cursor(object):
         conn = self._get_db()
         for index, arg in enumerate(args):
             q = "SET @_%s_%d=%s" % (procname, index, conn.escape(arg))
-            if isinstance(q, unicode):
+            if isinstance(q, str):
                 q = q.encode(conn.charset)
             self._query(q)
             self.nextset()
@@ -186,7 +186,7 @@ class Cursor(object):
         q = "CALL %s(%s)" % (procname,
                              ','.join(['@_%s_%d' % (procname, i)
                                        for i in range(len(args))]))
-        if isinstance(q, unicode):
+        if isinstance(q, str):
             q = q.encode(conn.charset)
         self._query(q)
         self._executed = q
@@ -269,14 +269,14 @@ class DictCursor(Cursor):
         r = super(DictCursor, self).fetchone()
         if not r:
             return None
-        return  dict(zip(self._fields, r))
+        return  dict(list(zip(self._fields, r)))
 
     def fetchmany(self, size=None):
         ''' Fetch several rows '''
         self._check_executed()
         if self._result is None:
             return None
-        result = [ dict(zip(self._fields, r)) for r in super(DictCursor, self).fetchmany(size)]
+        result = [ dict(list(zip(self._fields, r))) for r in super(DictCursor, self).fetchmany(size)]
         return tuple(result)
 
     def fetchall(self):
@@ -284,6 +284,6 @@ class DictCursor(Cursor):
         self._check_executed()
         if self._result is None:
             return None
-        result = [ dict(zip(self._fields, r)) for r in super(DictCursor, self).fetchall() ]
+        result = [ dict(list(zip(self._fields, r))) for r in super(DictCursor, self).fetchall() ]
         return tuple(result)
 

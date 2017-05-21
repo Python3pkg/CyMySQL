@@ -15,7 +15,7 @@ ESCAPE_MAP = {'\0': '\\0', '\n': '\\n', '\r': '\\r', '\032': '\\Z',
 
 
 def escape_dict(val, charset):
-    return dict([(k, escape_item(v, charset)) for k, v in val.items()])
+    return dict([(k, escape_item(v, charset)) for k, v in list(val.items())])
 
 def escape_sequence(val, charset):
     return "(" + ",".join([escape_item(v, charset) for v in val]) + ")"
@@ -269,12 +269,12 @@ decoders = {
         FIELD_TYPE.BIT: convert_bit,
         FIELD_TYPE.TINY: int,
         FIELD_TYPE.SHORT: int,
-        FIELD_TYPE.LONG: int if PYTHON3 else long,
+        FIELD_TYPE.LONG: int if PYTHON3 else int,
         FIELD_TYPE.FLOAT: float,
         FIELD_TYPE.DOUBLE: float,
         FIELD_TYPE.DECIMAL: float,
         FIELD_TYPE.NEWDECIMAL: float,
-        FIELD_TYPE.LONGLONG: int if PYTHON3 else long,
+        FIELD_TYPE.LONGLONG: int if PYTHON3 else int,
         FIELD_TYPE.INT24: int,
         FIELD_TYPE.DECIMAL:  convert_decimal,
         FIELD_TYPE.NEWDECIMAL: convert_decimal,
@@ -315,8 +315,8 @@ encoders = {
 if PYTHON3:
     encoders[bytes] = escape_bytes
 else:
-    encoders[unicode] = escape_string
-    encoders[long] = escape_long
+    encoders[str] = escape_string
+    encoders[int] = escape_long
 
 
 def escape_item(val, charset, encoders=encoders):

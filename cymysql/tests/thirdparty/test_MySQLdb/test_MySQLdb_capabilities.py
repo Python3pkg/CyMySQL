@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import capabilities
+from . import capabilities
 import unittest
 import cymysql
 from cymysql.tests import base
@@ -82,7 +82,7 @@ class test_MySQLdb(capabilities.DatabaseTest):
         from cymysql.constants import ER
         try:
             self.cursor.execute("describe some_non_existent_table");
-        except self.connection.ProgrammingError, msg:
+        except self.connection.ProgrammingError as msg:
             self.assertTrue(msg.args[0] == ER.NO_SUCH_TABLE)
     
     def test_ping(self):

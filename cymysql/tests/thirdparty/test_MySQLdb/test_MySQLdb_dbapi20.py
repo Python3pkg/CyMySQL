@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import dbapi20
+from . import dbapi20
 import unittest
 import cymysql
 from cymysql.tests import base

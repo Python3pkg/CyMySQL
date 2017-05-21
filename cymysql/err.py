@@ -5,9 +5,9 @@ from cymysql.constants import ER
 PYTHON3 = sys.version_info[0] > 2
 
 if PYTHON3:
-    StandardError = Exception
+    Exception = Exception
 
-class MySQLError(StandardError):
+class MySQLError(Exception):
 
     """Exception related to operation with MySQL."""
     def __init__(self, *args):
